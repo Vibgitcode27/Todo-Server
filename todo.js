@@ -1,6 +1,10 @@
 const express = require(`express`);
+const path = require(`path`)
 const app = express()
+const cors = require(`cors`)
 const fs = require(`fs`);
+
+app.use(cors())
 
 listener = () =>
 {
@@ -18,8 +22,8 @@ getTodo = (req ,res) =>
     fs.readFile(`todo.json` , `utf-8` , (err , data) =>
     {
         if(err) throw err;
-        let ans = JSON.parse(data)
-        res.status(201).send(ans)
+        let ans = JSON.parse(data)  
+        res.status(201).json(ans)
     })
 }
 
@@ -103,7 +107,7 @@ deleteTodos = (req , res) =>
     {   
         if(err) throw err;
         const todos = JSON.parse(data)
-        const todoIndex = todos.findIndex(t => t.id === parseInt(req.body.id));
+        const todoIndex = todos.findIndex(t => t.id === parseInt(req.params.id));
       if (todoIndex == -1) {
         res.status(404).send("Cannot find mentioned ID");
       } else {
@@ -118,6 +122,11 @@ deleteTodos = (req , res) =>
 }
 
 app.delete(`/todos/:id` , deleteTodos)
+
+// app.get(`/` , (req ,res) =>
+// {
+//     res.sendFile(path.join(__dirname , "index.html"));
+// })
 
 app.use((req ,res, nest) =>
 {

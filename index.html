@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO-App</title>
+</head>
+
+<body>
+    <p>Todo Title</p>
+    <input type="text" id="title"></input>
+    <p>Todo Completion Status</p>
+    <input type="text" id="ComptStatus"></input>
+    <p>Todo Description</p>
+    <input type="text" id="description"></input>
+    <button type="button" onclick="postResponse()">Submit</button>
+    <p>TODO LIST</p>
+    <div id="class"></div>
+
+    <!-- <script src="Server-access-script.js"></script> -->
+<script>
+
+    getResponse = async () =>
+    {
+        let value = await fetch(`http://localhost:3000/todos` , {method : `GET`})
+        let response = await value.json()
+        console.log(response)
+        parentElement = document.getElementById("class")
+        for (let i = 0; i < response.length; i++) {
+            let childElement = document.createElement("div")
+            let grandchildElement1 = document.createElement("p")
+            grandchildElement1.innerHTML = `${i} Title : ` + response[i].title
+
+            let grandchildElement2 = document.createElement("p")
+            grandchildElement2.innerHTML = `${i} Completed : ` + response[i].completed
+
+            let grandchildElement3 = document.createElement("p")
+            grandchildElement3.innerHTML = `${i} description : ` + response[i].description
+
+            let grandchildElement4 = document.createElement("button")
+            grandchildElement4.setAttribute(`onclick` , `deleteTodo(`+ response[i].id + `)`)
+            grandchildElement4.innerHTML = "Delete"
+
+            childElement.appendChild(grandchildElement1)
+            childElement.appendChild(grandchildElement2)
+            childElement.appendChild(grandchildElement3)
+            childElement.appendChild(grandchildElement4)
+
+            parentElement.appendChild(childElement)
+            // parentElement.innerHTML = "id :" + response[1].title   
+        }
+        // parentElement.innerHTML = JSON.stringify(response)
+    } 
+    getResponse()
+
+   async function postResponse()
+{
+    let title1 = document.getElementById("title").value
+    let completed1 = document.getElementById("ComptStatus").value
+    let description1 = document.getElementById("description").value
+
+    let value = await fetch(`http://localhost:3000/todos` , {method : 'POST' , 
+    body: JSON.stringify({
+        title : title1,
+        completed : completed1,
+        description: description1 
+    }),
+    headers: {
+        "Content-Type" : "application/json"
+    }    
+})
+    let response = await value.json()
+    getResponse()
+}
+
+async function deleteTodo(id1)
+{
+    let value = await fetch(`http://localhost:3000/todos/`+ id1 , {method : `DELETE`})
+    awaitFun = () =>
+    {
+        console.log(`delete Done`);
+    }
+    await awaitFun()
+}
+
+deleteTodo()
+</script>
+</body>
+</html>
